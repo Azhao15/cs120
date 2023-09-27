@@ -74,16 +74,11 @@ class BinarySearchTree:
             return None
         elif self.key == key:
             return self
-        elif self.key < key:
-            if self.right is not None:
-                return self.right.search(key)
-            else:
-                return None
-        else:
-            if self.left is not None:
-                return self.left.search(key)
-            else:
-                return None
+        elif self.key < key and self.right is not None:
+            return self.right.search(key)
+        elif self.left is not None:
+            return self.left.search(key)
+        return None
     
 
     '''
@@ -100,11 +95,12 @@ class BinarySearchTree:
             if self.left is None:
                 self.left = BinarySearchTree(self.debugger)
             self.left.insert(key)
+            self._size += 1
         elif self.key < key:
             if self.right is None:
                 self.right = BinarySearchTree(self.debugger)
             self.right.insert(key)
-        self.calculate_sizes()
+            self._size += 1
         return self
 
     
@@ -122,21 +118,6 @@ class BinarySearchTree:
         11
           \
            12
-    9
-     \
-      10
-       \
-        12
-        /\
-      11  13
-    
-    9
-     \
-      12
-      /\
-    11  13
-    /    
-   10 
     Execute: NodeFor10.rotate("L", "R") -> Outputs: NodeFor10
     Output Graph
       10
@@ -159,7 +140,7 @@ class BinarySearchTree:
                 self.right.size = hold.size
             elif direction == "R":
                 self.right = self.right.left
-                hold.right = self.right.right
+                hold.left = self.right.right
                 self.right.right = hold
                 if self.right.right.left == None:
                     self.right.right.size = hold.size - self.right.size
@@ -170,8 +151,8 @@ class BinarySearchTree:
             hold = self.left
             if direction == "L":
                 self.left = self.left.right
-                hold.left = self.left.left
-                self.right.left = hold
+                hold.right = self.left.left
+                self.left.left = hold
                 if self.left.left.right == None:
                     self.left.left.size = hold.size - self.left.size 
                 else:
