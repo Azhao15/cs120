@@ -61,7 +61,7 @@ class BinarySearchTree:
         if left_size > ind and self.left is not None:
             return self.left.select(ind)
         if left_size < ind and self.right is not None:
-            return self.right.select(ind)
+            return self.right.select(ind - (left_size + 1))
         return None
 
 
@@ -74,11 +74,16 @@ class BinarySearchTree:
             return None
         elif self.key == key:
             return self
-        elif self.key < key and self.right is not None:
-            return self.right.search(key)
-        elif self.left is not None:
-            return self.left.search(key)
-        return None
+        elif self.key < key:
+            if self.right is not None:
+                return self.right.search(key)
+            else:
+                return None
+        else:
+            if self.left is not None:
+                return self.left.search(key)
+            else:
+                return None
     
 
     '''
@@ -117,7 +122,21 @@ class BinarySearchTree:
         11
           \
            12
+    9
+     \
+      10
+       \
+        12
+        /\
+      11  13
     
+    9
+     \
+      12
+      /\
+    11  13
+    /    
+   10 
     Execute: NodeFor10.rotate("L", "R") -> Outputs: NodeFor10
     Output Graph
       10
@@ -127,7 +146,46 @@ class BinarySearchTree:
        11 
     '''
     def rotate(self, direction, child_side):
-        # Your code goes here
+        if child_side == "R":
+            hold = self.right
+            if direction == "L":
+                self.right = self.right.right
+                hold.right = self.right.left
+                self.right.left = hold
+                if self.right.left.right == None:
+                    self.right.left.size = hold.size - self.right.size
+                else:
+                    self.right.left.size = hold.size - self.right.size + self.right.left.right.size
+                self.right.size = hold.size
+            elif direction == "R":
+                self.right = self.right.left
+                hold.right = self.right.right
+                self.right.right = hold
+                if self.right.right.left == None:
+                    self.right.right.size = hold.size - self.right.size
+                else: 
+                    self.right.right.size = hold.size - self.right.size + self.right.right.left.size
+                self.right.size = hold.size
+        elif child_side == "L":
+            hold = self.left
+            if direction == "L":
+                self.left = self.left.right
+                hold.left = self.left.left
+                self.right.left = hold
+                if self.left.left.right == None:
+                    self.left.left.size = hold.size - self.left.size 
+                else:
+                    self.left.left.size = hold.size - self.left.size + self.left.left.right.size
+                self.left.size = hold.size
+            elif direction == "R":
+                self.left = self.left.left
+                hold.left = self.left.right
+                self.left.right = hold
+                if self.left.right.left == None:
+                    self.left.right.size = hold.size - self.left.size
+                else:
+                    self.left.right.size = hold.size - self.left.size + self.left.right.left.size
+                self.left.size = hold.size
         return self
 
     def print_bst(self):
