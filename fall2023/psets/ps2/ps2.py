@@ -127,46 +127,43 @@ class BinarySearchTree:
        11 
     '''
     def rotate(self, direction, child_side):
-        if child_side == "R":
-            hold = self.right
-            if direction == "L":
-                self.right = self.right.right
-                hold.right = self.right.left
-                self.right.left = hold
-                if self.right.left.right == None:
-                    self.right.left.size = hold.size - self.right.size
-                else:
-                    self.right.left.size = hold.size - self.right.size + self.right.left.right.size
-                self.right.size = hold.size
-            elif direction == "R":
-                self.right = self.right.left
-                hold.left = self.right.right
-                self.right.right = hold
-                if self.right.right.left == None:
-                    self.right.right.size = hold.size - self.right.size
-                else: 
-                    self.right.right.size = hold.size - self.right.size + self.right.right.left.size
-                self.right.size = hold.size
-        elif child_side == "L":
-            hold = self.left
-            if direction == "L":
-                self.left = self.left.right
-                hold.right = self.left.left
-                self.left.left = hold
-                if self.left.left.right == None:
-                    self.left.left.size = hold.size - self.left.size 
-                else:
-                    self.left.left.size = hold.size - self.left.size + self.left.left.right.size
-                self.left.size = hold.size
-            elif direction == "R":
-                self.left = self.left.left
-                hold.left = self.left.right
-                self.left.right = hold
-                if self.left.right.left == None:
-                    self.left.right.size = hold.size - self.left.size
-                else:
-                    self.left.right.size = hold.size - self.left.size + self.left.right.left.size
-                self.left.size = hold.size
+        
+        if child_side == "R" and self.right is not None:
+            child = self.right
+        elif child_side == "L" and self.left is not None:
+            child = self.left
+            
+        if direction == "R":
+            x = child
+            y = x.left
+
+            a = y.left.size if y.left is not None else 0
+            b = y.right.size if y.right is not None else 0
+            c = x.right.size if x.right is not None else 0
+
+            x.left = y.right
+            y.right = x
+            x.size = b + c + 1
+            y.size = x.size + a + 1
+
+        elif direction == "L":
+            x = child
+            y = x.right
+            
+            a = x.left.size if x.left is not None else 0
+            b = y.left.size if y.left is not None else 0
+            c = y.right.size if y.right is not None else 0
+
+            x.right = y.left
+            y.left = x
+            x.size = a + b + 1 
+            y.size = x.size + c + 1  
+        
+        if child_side == "L":
+            self.left = y
+        elif child_side == "R":
+            self.right = y
+            
         return self
 
     def print_bst(self):
