@@ -1,4 +1,6 @@
 from itertools import product, combinations
+import math
+import queue
 
 '''
 Before you start: Read the README and the Graph implementation below.
@@ -130,8 +132,27 @@ def bfs_2_coloring(G, precolored_nodes=None):
     # TODO: Complete this function by implementing two-coloring using the colors 0 and 1.
     # If there is no valid coloring, reset all the colors to None using G.reset_colors()
     
-    G.reset_colors()
-    return None
+    q = queue.Queue()
+    for node in range (G.N):
+        if node not in visited:
+            G.colors[node] = 0
+            q.put(node)
+            visited.add(node)
+            while not q.empty():
+                cnode = q.get()
+                visited.add(cnode)
+                current_color = G.colors[cnode]
+                next_color = 1 - current_color
+                for node in G.edges[cnode]:
+                    if node not in visited:
+                        q.put(node)
+                        G.colors[node] = next_color
+
+    if G.is_graph_coloring_valid():
+        return G.colors
+    else:
+        G.reset_colors()
+        return None
 
 '''
     Part B: Implement is_independent_set.
@@ -141,7 +162,10 @@ def bfs_2_coloring(G, precolored_nodes=None):
 # Checks if subset is an independent set in G 
 def is_independent_set(G, subset):
     # TODO: Complete this function
-
+    for node1 in subset:
+        for node2 in subset:
+            if node1 != node2 and node2 in G.edges[node1]:
+                return False
     return True
 
 '''
@@ -169,8 +193,16 @@ def is_independent_set(G, subset):
 # If no coloring is possible, resets all of G's colors to None and returns None.
 def iset_bfs_3_coloring(G):
     # TODO: Complete this function.
+    max_ind_set_size = math.floor(G.N/3) + 1
 
-    G.reset_colors()
+    for n in range(max_ind_set_size):
+        for combination in combinations(range(G.N), n):
+            lst = list(combination)
+            if is_independent_set(G, lst):
+                r = bfs_2_coloring(G, lst)
+                if r is not None:
+                    return r
+                G.reset_colors()
     return None
 
 # Feel free to add miscellaneous tests below!

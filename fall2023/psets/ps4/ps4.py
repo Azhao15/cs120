@@ -32,11 +32,24 @@ returns: An key-value pair (Kj, Vj) such that Kj is an i’th smallest key.
 
 def QuickSelect(arr, i):
     # Your code here
+    if len(arr) == 1:
+        return arr[0]
+    
+    pivot = arr[get_random_index(arr)]
+
+    left = [x for x in arr if x < pivot]
+    equal = [x for x in arr if x == pivot]
+    right = [x for x in arr if x > pivot]
+
+    if i < len(left):
+        return QuickSelect(left, i)
+    elif i < len(left) + len(equal):
+        return equal[0]
+    else:
+        return QuickSelect(right, i - len(left) - len(equal))
 
     # Feel free to use get_random_index(arr) or get_random_int(start_inclusive, end_inclusive)
     # ... see the helper functions below
-    pass
-    return (0, -1)
 
 
 '''
@@ -54,8 +67,11 @@ NOTE: This is different from the QuickSelect definition. This function takes in 
 def MergeSortSelect(arr, query_list):
     # Only call MergeSort once
     # ... MergeSort has already been implemented for you (see below)
-    pass
-    return [(0, -1)] * len(query_list)  # replace this line with your return
+    sorted = MergeSort(arr)
+    final = []
+    for n in query_list:
+        final.append(sorted[n])
+    return final  # replace this line with your return
 
 
 ##################################
@@ -67,13 +83,13 @@ def MergeSortSelect(arr, query_list):
 
 def experiments():
     # Edit this parameter
-    k = [1, 1, 1, 1, 1]
+    k = [1, 5, 6, 7, 8, 9]
 
     # Feel free to edit these initial parameters
 
-    RUNS = 20  # Number of runs for each trial; more runs means better distributions approximation but longer experiment
-    HEIGHT = 1.5  # Height of a chart
-    WIDTH = 3   # Width of a chart
+    RUNS = 30  # Number of runs for each trial; more runs means better distributions approximation but longer experiment
+    HEIGHT = 2  # Height of a chart
+    WIDTH = 5   # Wdth of a chart
     # Determines if subcharts share the same axis scale/limits
     # ... since the trails cover a wide range, sharing the same scale/limits can cause some lines to be too small.
     SAME_AXIS_SCALE = False
